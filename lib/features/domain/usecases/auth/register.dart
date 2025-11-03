@@ -1,8 +1,9 @@
+import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:marketplace/core/resources/data_state.dart';
+import 'package:marketplace/core/error/failure.dart';
 import 'package:marketplace/features/domain/repository/auth_repository.dart';
-import 'package:marketplace/features/domain/entities/auth.dart';
+import 'package:marketplace/features/domain/entities/auth/auth_entity.dart';
 import '../usecase.dart';
 
 class RegisterParams {
@@ -18,13 +19,13 @@ class RegisterParams {
 }
 
 @lazySingleton
-class RegisterUseCase extends UseCase<DataState<AuthEntity>, RegisterParams> {
+class Register extends UseCase<AuthEntity, RegisterParams> {
   final AuthRepository authRepository;
 
-  RegisterUseCase({required this.authRepository});
+  Register({required this.authRepository});
 
   @override
-  Future<DataState<AuthEntity>> call({required RegisterParams params}) {
+  Future<Either<Failure, AuthEntity>> call({required RegisterParams params}) {
     return authRepository.registerByPassword(
       fullName: params.fullName,
       email: params.email,

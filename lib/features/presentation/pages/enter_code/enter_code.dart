@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:marketplace/config/injection/injection_container.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/bloc.dart';
+import 'package:marketplace/features/presentation/bloc/auth/auth_bloc.dart';
 import 'package:marketplace/features/presentation/widgets/app_layout/app_layout.dart';
 import 'form.dart';
 
@@ -12,7 +12,7 @@ class EnterCodePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<RemoteAuthBloc>(),
+      create: (context) => getIt<AuthBloc>(),
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(),

@@ -1,0 +1,24 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'user_entity.freezed.dart';
+
+@freezed
+abstract class UserShortEntity with _$UserShortEntity {
+  const factory UserShortEntity({
+    required String id,
+    required String fullName,
+    required String email,
+  }) = _UserShortEntity;
+}
+
+@freezed
+abstract class UserEntity with _$UserEntity {
+  const factory UserEntity({
+    required String id,
+    required String fullName,
+    required String email,
+    DateTime? birthDate,
+    String? gender,
+    String? phoneNumber,
+  }) = _UserEntity;
+}

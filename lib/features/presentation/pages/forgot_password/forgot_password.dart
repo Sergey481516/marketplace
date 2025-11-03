@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:marketplace/config/injection/injection_container.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/bloc.dart';
+import 'package:marketplace/features/presentation/bloc/auth/forgot_password_bloc.dart';
 import 'form.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
@@ -11,7 +11,7 @@ class ForgotPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<RemoteAuthBloc>(),
+      create: (context) => getIt<ForgotPasswordBloc>(),
       child: const ForgotPasswordForm(),
     );
   }

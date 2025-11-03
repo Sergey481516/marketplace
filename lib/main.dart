@@ -1,26 +1,50 @@
+import 'dart:async';
+
+import 'package:stack_trace/stack_trace.dart';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'package:marketplace/config/theme/theme.dart';
-import 'package:marketplace/config/router.dart';
+import 'package:marketplace/core/app/app_root.dart';
 import 'package:marketplace/config/injection/injection_container.dart';
 
+import 'firebase_options.dart';
+
 Future<void> main() async {
-  await dotenv.load(fileName: '.env');
-  configureDependencies();
+  FlutterError.demangleStackTrace = (StackTrace stack) {
+    if (stack is Trace) return stack.vmTrace;
+    if (stack is Chain) return stack.toTrace().vmTrace;
+    return stack;
+  };
 
-  runApp(const MyApp());
-}
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+      await dotenv.load(fileName: '.env');
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Marketplace',
-      theme: theme,
-      routerConfig: router,
-    );
-  }
+      await configureDependencies();
+
+      runApp(const AppRoot());
+    },
+    (error, stack) {
+      final trace = Trace.from(stack);
+      debugPrint('❌ Uncaught error: $error\n${trace.terse}');
+    },
+  );
+  // WidgetsFlutterBinding.ensureInitialized();
+  //
+  // await dotenv.load(fileName: '.env');
+  //
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  //
+  // configureDependencies();
+  //
+  // runApp(
+  //   BlocProvider(create: (_) => getIt<AuthBloc>(), child: const AppRoot()),
+  // );
 }

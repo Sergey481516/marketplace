@@ -1,9 +1,9 @@
+import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:marketplace/core/resources/data_state.dart';
-import 'package:marketplace/features/domain/usecases/usecase.dart';
-import 'package:marketplace/features/domain/entities/auth.dart';
+import 'package:marketplace/core/error/failure.dart';
 import 'package:marketplace/features/domain/repository/auth_repository.dart';
+import 'package:marketplace/features/domain/usecases/usecase.dart';
 
 class ForgotPasswordParams {
   final String email;
@@ -12,16 +12,13 @@ class ForgotPasswordParams {
 }
 
 @lazySingleton
-class ForgotPasswordUseCase
-    extends UseCase<DataState<ForgotPasswordEntity>, ForgotPasswordParams> {
+class ForgotPassword extends UseCase<void, ForgotPasswordParams> {
   final AuthRepository authRepository;
 
-  ForgotPasswordUseCase({required this.authRepository});
+  ForgotPassword(this.authRepository);
 
   @override
-  Future<DataState<ForgotPasswordEntity>> call({
-    required ForgotPasswordParams params,
-  }) {
+  Future<Either<Failure, void>> call({required ForgotPasswordParams params}) {
     return authRepository.forgotPassword(email: params.email);
   }
 }

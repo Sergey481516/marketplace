@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:marketplace/config/routes.dart';
+import 'package:marketplace/config/router/routes.dart';
 import 'package:marketplace/config/theme/app_typography.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/bloc.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/event.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/state.dart';
+import 'package:marketplace/features/presentation/bloc/auth/login_bloc.dart';
 import 'package:marketplace/features/presentation/components/app_dialog/show_dialog_mixin.dart';
 import 'package:marketplace/features/presentation/widgets/app_email_field/app_email_field.dart';
 import 'package:marketplace/features/presentation/widgets/app_password_field/app_password_field.dart';
@@ -38,29 +36,29 @@ class _LoginFormState extends State<LoginForm> with ShowDialogMixin {
       final String email = _emailController.text;
       final String password = _passwordController.text;
 
-      context.read<RemoteAuthBloc>().add(
-        Login(email: email, password: password),
+      context.read<LoginBloc>().add(
+        LoginEvent.start(email: email, password: password),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RemoteAuthBloc, RemoteAuthState>(
+    return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
-        if (state is RemoteAuthDone) {
+        if (state is LoginDoneState) {
           context.go(Routes.home);
         }
 
-        if (state is RemoteAuthError) {
+        if (state is LoginFailState) {
           showErrorDialog(
-            description: 'Invalid login or password',
+            description: state.message,
             onOk: () => Navigator.of(context).pop(),
           );
         }
       },
       builder: (context, state) {
-        final isLoading = state is RemoteAuthLoading;
+        final isLoading = state is LoginLoadingState;
 
         return Form(
           key: _formKey,

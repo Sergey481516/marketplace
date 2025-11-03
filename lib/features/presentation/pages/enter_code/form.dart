@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
-import 'package:marketplace/config/routes.dart';
+import 'package:marketplace/config/router/routes.dart';
 import 'package:marketplace/config/theme/app_typography.dart';
 import 'package:marketplace/config/theme/app_colors.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/bloc.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/event.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/state.dart';
+import 'package:marketplace/features/presentation/bloc/auth/auth_bloc.dart';
+// import 'package:marketplace/features/presentation/bloc/auth/event.dart';
+// import 'package:marketplace/features/presentation/bloc/auth/state.dart';
 import 'package:marketplace/features/presentation/components/app_dialog/show_dialog_mixin.dart';
 import 'package:marketplace/features/presentation/components/login_header/login_header.dart';
 import 'package:marketplace/features/presentation/components/login_double_rich_text/login_double_rich_text.dart';
@@ -26,40 +26,39 @@ class _EnterCodeFormState extends State<EnterCodeForm> with ShowDialogMixin {
   void _resendCode() {
     final String resetId = (GoRouterState.of(context).extra as Map)['resetId'];
 
-    context.read<RemoteAuthBloc>().add(ResendCode(resetId: resetId));
+    // context.read<AuthBloc>().add(ResendCodeEvent(resetId: resetId));
   }
 
   void _verifyCode() {
     final String resetId = (GoRouterState.of(context).extra as Map)['resetId'];
     final String code = _codeController.text;
 
-    context.read<RemoteAuthBloc>().add(
-      VerifyCode(resetId: resetId, code: code),
-    );
+    // context.read<AuthBloc>().add(VerifyCodeEvent(resetId: resetId, code: code));
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RemoteAuthBloc, RemoteAuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is RemoteAuthError) {
-          showErrorDialog(
-            description: 'Invalid code, please try again',
-            onOk: () => Navigator.of(context).pop(),
-          );
-        }
+        // if (state is AuthError) {
+        //   showErrorDialog(
+        //     description: 'Invalid code, please try again',
+        //     onOk: () => Navigator.of(context).pop(),
+        //   );
+        // }
 
-        if (state is RemoteAuthCodeVerified) {
-          context.go(
-            Routes.resetPassword,
-            extra: {
-              'resetId': (GoRouterState.of(context).extra as Map)['resetId'],
-            },
-          );
-        }
+        // if (state is AuthCodeVerified) {
+        //   context.go(
+        //     Routes.resetPassword,
+        //     extra: {
+        //       'resetId': (GoRouterState.of(context).extra as Map)['resetId'],
+        //     },
+        //   );
+        // }
       },
       builder: (context, state) {
-        final isLoading = state is RemoteAuthLoading;
+        // final isLoading = state is AuthLoading;
+        final isLoading = false;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:marketplace/config/routes.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -23,16 +20,6 @@ class _SplashPageState extends State<SplashPage>
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
-
-    _navigateNextPage();
-  }
-
-  Future<void> _navigateNextPage() async {
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-
-    context.go(Routes.onboarding);
   }
 
   @override

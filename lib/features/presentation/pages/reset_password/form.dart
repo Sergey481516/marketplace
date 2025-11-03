@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:marketplace/config/routes.dart';
+import 'package:marketplace/config/router/routes.dart';
 
-import 'package:marketplace/features/presentation/bloc/remote/auth/bloc.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/event.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/state.dart';
+import 'package:marketplace/features/presentation/bloc/auth/auth_bloc.dart';
+// import 'package:marketplace/features/presentation/bloc/auth/event.dart';
+// import 'package:marketplace/features/presentation/bloc/auth/state.dart';
 import 'package:marketplace/features/presentation/components/app_dialog/show_dialog_mixin.dart';
 
 import 'package:marketplace/features/presentation/widgets/app_password_field/app_password_field.dart';
@@ -27,33 +27,34 @@ class _ResetPasswordFormState extends State<ResetPasswordForm>
     final String resetId = (GoRouterState.of(context).extra as Map)['resetId'];
     final String password = _passwordController.text;
 
-    context.read<RemoteAuthBloc>().add(
-      ResetPassword(resetId: resetId, password: password),
-    );
+    // context.read<AuthBloc>().add(
+    //   ResetPasswordEvent(resetId: resetId, password: password),
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RemoteAuthBloc, RemoteAuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is RemoteAuthError) {
-          showErrorDialog(onOk: () => Navigator.of(context).pop());
-        }
+        // if (state is AuthError) {
+        //   showErrorDialog(onOk: () => Navigator.of(context).pop());
+        // }
 
-        if (state is RemoteAuthPasswordUpdated) {
-          showSuccessDialog(
-            title: 'Password Changed!',
-            description:
-                'Your can now use your new password to login to your account.',
-            okButtonText: 'Login',
-            onOk: () {
-              context.go(Routes.login);
-            },
-          );
-        }
+        // if (state is AuthPasswordUpdated) {
+        //   showSuccessDialog(
+        //     title: 'Password Changed!',
+        //     description:
+        //         'Your can now use your new password to login to your account.',
+        //     okButtonText: 'Login',
+        //     onOk: () {
+        //       context.go(Routes.login);
+        //     },
+        //   );
+        // }
       },
       builder: (context, state) {
-        final isLoading = state is RemoteAuthLoading;
+        // final isLoading = state is AuthLoading;
+        final isLoading = false;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

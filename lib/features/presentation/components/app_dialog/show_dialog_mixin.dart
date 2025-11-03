@@ -22,16 +22,17 @@ mixin ShowDialogMixin<T extends StatefulWidget> on State<T> {
 
   void showErrorDialog({
     String? title,
-    String description = 'An error occurred, please try again later.',
-    String okButtonText = 'Ok',
+    String? description,
+    String? okButtonText,
     required VoidCallback onOk,
   }) {
     showDialog(
       context: context,
       builder: (_) => AppDialog.error(
         title: title,
-        description: description,
-        okButtonText: okButtonText,
+        description:
+            description ?? 'An error occurred, please try again later.',
+        okButtonText: okButtonText ?? 'Ok',
         onOk: onOk,
       ),
     );

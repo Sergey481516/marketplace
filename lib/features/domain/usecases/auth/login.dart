@@ -1,7 +1,8 @@
+import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:marketplace/core/error/failure.dart';
 
-import 'package:marketplace/core/resources/data_state.dart';
-import 'package:marketplace/features/domain/entities/auth.dart';
+import 'package:marketplace/features/domain/entities/auth/auth_entity.dart';
 import 'package:marketplace/features/domain/repository/auth_repository.dart';
 
 import '../usecase.dart';
@@ -14,13 +15,13 @@ class LoginParams {
 }
 
 @lazySingleton
-class LoginUseCase extends UseCase<DataState<AuthEntity>, LoginParams> {
+class Login extends UseCase<AuthEntity, LoginParams> {
   final AuthRepository authRepository;
 
-  LoginUseCase({required this.authRepository});
+  Login({required this.authRepository});
 
   @override
-  Future<DataState<AuthEntity>> call({required LoginParams params}) {
+  Future<Either<AuthFailure, AuthEntity>> call({required LoginParams params}) {
     return authRepository.loginByPassword(
       email: params.email,
       password: params.password,

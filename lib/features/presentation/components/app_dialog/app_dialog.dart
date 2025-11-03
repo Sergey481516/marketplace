@@ -88,7 +88,11 @@ class AppDialog extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          Text(description, style: AppTypography.body2Medium),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: AppTypography.body2Medium,
+          ),
         ],
       ),
 

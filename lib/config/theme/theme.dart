@@ -9,6 +9,7 @@ final ThemeData theme = ThemeData(
     bodyColor: AppColors.textPrimary,
     displayColor: AppColors.textPrimary,
   ),
+  appBarTheme: AppBarTheme(titleTextStyle: AppTypography.h3),
   colorScheme: ColorScheme.fromSwatch(
     primarySwatch: AppColors.primary,
   ).copyWith(secondary: AppColors.success, error: AppColors.error),
@@ -16,6 +17,7 @@ final ThemeData theme = ThemeData(
     filled: true,
     fillColor: AppColors.primary[0],
 
+    // contentPadding: EdgeInsets.all(12),
     counterStyle: WidgetStateTextStyle.resolveWith((states) {
       if (states.contains(WidgetState.disabled)) {
         return TextStyle(color: AppColors.primary[100]!);
@@ -86,5 +88,17 @@ final ThemeData theme = ThemeData(
       padding: WidgetStateProperty.all(EdgeInsets.all(16)),
       textStyle: WidgetStateProperty.all(AppTypography.body1Medium),
     ),
+  ),
+  chipTheme: ChipThemeData(
+    iconTheme: IconThemeData(size: 0),
+    showCheckmark: false,
+    side: BorderSide(color: AppColors.primary[400]!),
+    color: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return Colors.black;
+      }
+
+      return Colors.white;
+    }),
   ),
 );

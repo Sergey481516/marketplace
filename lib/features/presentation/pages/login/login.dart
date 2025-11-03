@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:marketplace/config/injection/injection_container.dart';
 
-import 'package:marketplace/config/routes.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/bloc.dart';
+import 'package:marketplace/config/router/routes.dart';
+import 'package:marketplace/features/presentation/bloc/auth/login_bloc.dart';
 import 'package:marketplace/features/presentation/components/text_divider/text_divider.dart';
 import 'package:marketplace/features/presentation/widgets/app_layout/app_layout.dart';
 import 'package:marketplace/features/presentation/components/login_double_rich_text/login_double_rich_text.dart';
@@ -19,7 +19,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<RemoteAuthBloc>(),
+      create: (context) => getIt<LoginBloc>(),
       child: Scaffold(
         body: AppLayout(
           child: Column(

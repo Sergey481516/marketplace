@@ -3,12 +3,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:marketplace/config/routes.dart';
+import 'package:marketplace/config/router/routes.dart';
 
 import 'package:marketplace/config/theme/app_typography.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/bloc.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/event.dart';
-import 'package:marketplace/features/presentation/bloc/remote/auth/state.dart';
+import 'package:marketplace/features/presentation/bloc/auth/register_bloc.dart';
 import 'package:marketplace/features/presentation/components/app_dialog/show_dialog_mixin.dart';
 import 'package:marketplace/features/presentation/widgets/app_email_field/app_email_field.dart';
 import 'package:marketplace/features/presentation/widgets/app_text_field/app_text_field.dart';
@@ -43,8 +41,12 @@ class _RegisterFormState extends State<RegisterForm> with ShowDialogMixin {
       final String email = _emailController.text;
       final String password = _passwordController.text;
 
-      context.read<RemoteAuthBloc>().add(
-        Register(fullName: fullName, email: email, password: password),
+      context.read<RegisterBloc>().add(
+        RegisterEvent.start(
+          fullName: fullName,
+          email: email,
+          password: password,
+        ),
       );
     }
   }
@@ -89,9 +91,9 @@ class _RegisterFormState extends State<RegisterForm> with ShowDialogMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RemoteAuthBloc, RemoteAuthState>(
+    return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) {
-        if (state is RemoteAuthError) {
+        if (state is RegisterFailState) {
           showErrorDialog(
             description: 'An error occurred, please try again later.',
             okButtonText: 'Ok',
@@ -101,12 +103,12 @@ class _RegisterFormState extends State<RegisterForm> with ShowDialogMixin {
           );
         }
 
-        if (state is RemoteAuthDone) {
+        if (state is RegisterDoneState) {
           context.go(Routes.home);
         }
       },
       builder: (context, state) {
-        final isLoading = state is RemoteAuthLoading;
+        final isLoading = state is RegisterLoadingState;
 
         return Form(
           key: _formKey,
