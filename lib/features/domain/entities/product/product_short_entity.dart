@@ -13,5 +13,6 @@ abstract class ProductShortEntity with _$ProductShortEntity {
     // required CategoryEntity category,
     int? discount,
     required String image,
+    @Default(false) bool isFavorite,
   }) = _ProductShortEntity;
 }

@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:marketplace/core/module/analytics/analytics_service.dart';
 
 import 'package:marketplace/features/domain/usecases/auth/register.dart';
 
@@ -27,8 +28,10 @@ abstract class RegisterState with _$RegisterState {
 @lazySingleton
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final Register register;
+  final AnalyticsService analyticsService;
 
-  RegisterBloc(this.register) : super(const RegisterState.initial()) {
+  RegisterBloc(this.register, this.analyticsService)
+    : super(const RegisterState.initial()) {
     on<RegisterStartEvent>(_onRegister);
   }
 
@@ -46,9 +49,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     failureOrSuccess.fold(
       (err) {
         emit(RegisterState.fail(message: err.toString()));
+
+        analyticsService.userRegisterFailed(event.email, event.fullName);
       },
       (entity) {
         emit(RegisterState.done());
+
+        analyticsService.userRegistered(entity.user.id);
       },
     );
   }

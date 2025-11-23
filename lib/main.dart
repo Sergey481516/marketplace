@@ -36,15 +36,4 @@ Future<void> main() async {
       debugPrint('❌ Uncaught error: $error\n${trace.terse}');
     },
   );
-  // WidgetsFlutterBinding.ensureInitialized();
-  //
-  // await dotenv.load(fileName: '.env');
-  //
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  //
-  // configureDependencies();
-  //
-  // runApp(
-  //   BlocProvider(create: (_) => getIt<AuthBloc>(), child: const AppRoot()),
-  // );
 }

@@ -17,6 +17,7 @@ abstract class ProductModel with _$ProductModel {
     required String name,
     String? description,
     required double price,
+    @Default(false) bool isFavorite,
     // required CategoryEntity category,
     int? discount,
     required String image,
@@ -49,6 +50,7 @@ abstract class ProductModel with _$ProductModel {
     image: image,
     description: description,
     // rating: rating,
+    isFavorite: isFavorite,
   );
 
   ProductShortEntity toShort() =>

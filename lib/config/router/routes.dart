@@ -6,14 +6,14 @@ import 'package:marketplace/features/presentation/pages/home/home.dart';
 import 'package:marketplace/features/presentation/pages/notifications/notifications.dart';
 import 'package:marketplace/features/presentation/pages/product/product.dart';
 import 'package:marketplace/features/presentation/pages/reset_password/reset_password.dart';
+import 'package:marketplace/features/presentation/pages/saved/saved_page.dart';
 import 'package:marketplace/features/presentation/pages/search/search.dart';
 import 'package:marketplace/features/presentation/pages/splash/splash.dart';
 import 'package:marketplace/features/presentation/pages/onboarding/onboarding.dart';
 import 'package:marketplace/features/presentation/pages/register/register.dart';
 import 'package:marketplace/features/presentation/pages/login/login.dart';
 import 'package:marketplace/features/presentation/pages/forgot_password/forgot_password.dart';
-
-import 'fade_transition_page.dart';
+import 'package:marketplace/features/presentation/widgets/app_shell/app_shell.dart';
 
 class Routes {
   Routes._();
@@ -43,62 +43,55 @@ List<RouteBase> loadingRoutes = [
 List<RouteBase> authRoutes = [
   GoRoute(
     path: Routes.onboarding,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const OnboardingPage(), state: state),
+    builder: (context, state) => const OnboardingPage(),
   ),
   GoRoute(
     path: Routes.register,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const RegisterPage(), state: state),
+    builder: (context, state) => const RegisterPage(),
   ),
-  GoRoute(
-    path: Routes.login,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const LoginPage(), state: state),
-  ),
+  GoRoute(path: Routes.login, builder: (context, state) => const LoginPage()),
   GoRoute(
     path: Routes.forgotPassword,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const ForgotPasswordPage(), state: state),
+    builder: (context, state) => const ForgotPasswordPage(),
   ),
   GoRoute(
     path: Routes.enterCode,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const EnterCodePage(), state: state),
+    builder: (context, state) => const EnterCodePage(),
   ),
   GoRoute(
     path: Routes.resetPassword,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const ResetPasswordPage(), state: state),
+    builder: (context, state) => const ResetPasswordPage(),
   ),
 ];
 
 List<RouteBase> appRoutes = [
-  GoRoute(
-    path: Routes.home,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const HomePage(), state: state),
-  ),
-  GoRoute(
-    path: Routes.product,
-    pageBuilder: (context, state) => FadeTransitionPage(
-      child: ProductPage(id: state.pathParameters['id'] as String),
-      state: state,
-    ),
-  ),
-  GoRoute(
-    path: Routes.notifications,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const NotificationsPage(), state: state),
-  ),
-  GoRoute(
-    path: Routes.search,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const SearchPage(), state: state),
-  ),
-  GoRoute(
-    path: Routes.account,
-    pageBuilder: (context, state) =>
-        FadeTransitionPage(child: const AccountPage(), state: state),
+  ShellRoute(
+    builder: (context, state, child) {
+      return AppShell(child: child);
+    },
+    routes: [
+      GoRoute(path: Routes.home, builder: (context, state) => const HomePage()),
+      GoRoute(
+        path: Routes.product,
+        builder: (context, state) =>
+            ProductPage(id: state.pathParameters['id'] as String),
+      ),
+      GoRoute(
+        path: Routes.notifications,
+        builder: (context, state) => const NotificationsPage(),
+      ),
+      GoRoute(
+        path: Routes.search,
+        builder: (context, state) => const SearchPage(),
+      ),
+      GoRoute(
+        path: Routes.saved,
+        builder: (context, state) => const SavedPage(),
+      ),
+      GoRoute(
+        path: Routes.account,
+        builder: (context, state) => const AccountPage(),
+      ),
+    ],
   ),
 ];

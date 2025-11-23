@@ -42,17 +42,12 @@ class ProductRepositoryImpl extends ProductRepository {
         final filterModel = filter != null
             ? ProductFilterModel.fromEntity(filter)
             : null;
-        final productResponseList = await productDatasource.getList(
-          filterModel,
-        );
+        final products = await productDatasource.getList(filterModel);
         final replace = filterModel?.cursor != null;
 
-        await productLocalDatasource.upsertAll(
-          productResponseList.list,
-          replace,
-        );
+        await productLocalDatasource.upsertAll(products, replace);
 
-        return Right(productResponseList.nextCursor);
+        return Right(products.last.id);
       }
 
       return Right(null);

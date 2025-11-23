@@ -21,11 +21,29 @@ class FavoriteDao extends DatabaseAccessor<AppDatabase>
     }
   }
 
+  Future<FavoriteData?> getOneById(String id) async {
+    try {
+      return await (select(
+        favorites,
+      )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+    } on DriftWrappedException catch (e) {
+      throw CacheException(e.message);
+    }
+  }
+
   Future<void> insertOne(FavoriteData product) async {
     try {
       await into(favorites).insert(product);
     } on DriftWrappedException catch (err) {
       throw CacheException(err.message);
+    }
+  }
+
+  Future<void> removeOne(FavoriteData product) async {
+    try {
+      await (delete(favorites)..where((tbl) => tbl.id.equals(product.id))).go();
+    } on DriftWrappedException catch (e) {
+      throw CacheException(e.message);
     }
   }
 }

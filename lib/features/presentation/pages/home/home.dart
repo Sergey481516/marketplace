@@ -6,9 +6,9 @@ import 'package:marketplace/config/injection/injection_container.dart';
 
 import 'package:marketplace/config/router/routes.dart';
 import 'package:marketplace/config/theme/app_typography.dart';
+import 'package:marketplace/features/domain/entities/category/category_entity.dart';
 import 'package:marketplace/features/domain/entities/product/product_entity.dart';
 import 'package:marketplace/features/presentation/bloc/init/init_bloc.dart';
-import 'package:marketplace/features/presentation/bloc/init/init_event.dart';
 import 'package:marketplace/features/presentation/bloc/product/bloc.dart';
 import 'package:marketplace/features/presentation/bloc/product/product_list_cubit.dart';
 import 'package:marketplace/features/presentation/bloc/product/state.dart';
@@ -18,7 +18,6 @@ import 'package:marketplace/features/presentation/components/app_search_bar/sear
 import 'package:marketplace/features/presentation/components/notifications_button/notifications_button.dart';
 import 'package:marketplace/features/presentation/pages/home/widgets/product_list_container.dart';
 import 'package:marketplace/features/presentation/pages/home/widgets/search_filter.dart';
-import 'package:marketplace/features/presentation/widgets/app_navbar/app_navbar.dart';
 
 List<Filter> categories = [
   Filter(label: 'All', value: 'all'),
@@ -34,76 +33,88 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<InitBloc>()..add(Initialize()),
-      child: Scaffold(
-        body: RefreshIndicator(
-          onRefresh: () async {
-            // listCubit.fetchInitialProducts();
-          },
-          child: SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 12,
-                      left: 24,
-                      right: 16,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Discover', style: AppTypography.h2),
-
-                        NotificationsButton(
-                          onPressed: () {
-                            context.push(Routes.notifications);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Form(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => getIt<InitBloc>()..add(const InitEvent.start()),
+        ),
+        BlocProvider(create: (_) => getIt<ProductFilterCubit>()),
+        BlocProvider(create: (_) => getIt<ProductListCubit>()),
+      ],
+      child: BlocBuilder<InitBloc, InitState>(
+        builder: (context, state) {
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<ProductListCubit>().fetchInitialProducts();
+            },
+            child: SingleChildScrollView(
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 12,
+                        left: 24,
+                        right: 16,
+                      ),
                       child: Row(
-                        spacing: 8,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(child: const AppSearchBar()),
+                          Text('Discover', style: AppTypography.h2),
 
-                          SearchFilter(
-                            onApplyFilter: (filter) {
-                              // filterCubit.setFilter(filter);
+                          NotificationsButton(
+                            onPressed: () {
+                              context.push(Routes.notifications);
                             },
                           ),
                         ],
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 12),
 
-                  AppHorizontalFilter(
-                    filters: categories,
-                    onFilterChange: (Filter filter) {},
-                  ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: Form(
+                        child: Row(
+                          spacing: 8,
+                          children: [
+                            Expanded(child: const AppSearchBar()),
 
-                  const SizedBox(height: 24),
+                            SearchFilter(
+                              onApplyFilter: (filter) {
+                                context.read<ProductFilterCubit>().setFilter(
+                                  filter,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-                  const ProductListContainer(),
+                    const SizedBox(height: 16),
 
-                  const SizedBox(height: 24),
-                ],
+                    AppHorizontalFilter(
+                      filters: categories,
+                      onFilterChange: (filter) {
+                        context.read<ProductFilterCubit>().setCategory(
+                          CategoryEntity(id: filter.value, name: filter.label),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    const ProductListContainer(),
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-
-        bottomNavigationBar: const AppNavbar(),
+          );
+        },
       ),
     );
   }

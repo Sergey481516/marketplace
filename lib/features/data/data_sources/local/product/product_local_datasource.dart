@@ -23,7 +23,13 @@ class ProductLocalDatasourceImpl extends ProductLocalDatasource {
     var productsData = productDao.watchProducts();
 
     return productsData.map(
-      (products) => products.map((p) => ProductModel.fromDB(p)).toList(),
+      (products) => products
+          .map(
+            (p) => ProductModel.fromDB(
+              p.product,
+            ).copyWith(isFavorite: p.isFavorite),
+          )
+          .toList(),
     );
   }
 

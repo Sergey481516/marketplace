@@ -11,12 +11,17 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
 import 'package:dio/dio.dart' as _i361;
+import 'package:firebase_analytics/firebase_analytics.dart' as _i398;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i973;
+import 'package:marketplace/core/module/analytics/analytics_module.dart'
+    as _i642;
+import 'package:marketplace/core/module/analytics/analytics_service.dart'
+    as _i476;
 import 'package:marketplace/core/module/api_client/module.dart' as _i612;
 import 'package:marketplace/core/module/database/drift_database.dart' as _i186;
 import 'package:marketplace/core/module/firebase/firebase.dart' as _i353;
@@ -81,8 +86,8 @@ import 'package:marketplace/features/domain/usecases/auth/register.dart'
     as _i869;
 import 'package:marketplace/features/domain/usecases/dictionary/fetch_dictionary_use_case.dart'
     as _i254;
-import 'package:marketplace/features/domain/usecases/favorite/save_to_favorite_use_case.dart'
-    as _i364;
+import 'package:marketplace/features/domain/usecases/favorite/toggle_favorite_use_case.dart'
+    as _i1005;
 import 'package:marketplace/features/domain/usecases/notification/get_notifications_use_case.dart'
     as _i419;
 import 'package:marketplace/features/domain/usecases/product/fetch_product_use_case.dart'
@@ -120,6 +125,7 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final sharedPrefsModule = _$SharedPrefsModule();
     final firebaseModule = _$FirebaseModule();
+    final analyticsModule = _$AnalyticsModule();
     final secureStorageModule = _$SecureStorageModule();
     final module = _$Module();
     final apiClientModule = _$ApiClientModule();
@@ -132,6 +138,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i974.FirebaseFirestore>(
       () => firebaseModule.firebaseFirestore,
     );
+    gh.lazySingleton<_i398.FirebaseAnalytics>(() => analyticsModule.analytics);
     gh.lazySingleton<_i186.AppDatabase>(() => _i186.AppDatabase());
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => secureStorageModule.secureStorage,
@@ -167,6 +174,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i842.NetworkInfo>(
       () => _i842.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()),
+    );
+    gh.singleton<_i476.AnalyticsService>(
+      () => _i476.AnalyticsService(gh<_i398.FirebaseAnalytics>()),
     );
     gh.lazySingleton<_i32.AppLaunchRepository>(
       () => _i643.AppLaunchRepositoryImpl(gh<_i213.AppLaunchDatasource>()),
@@ -231,9 +241,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i982.FavoriteLocalDatasource>(
       () => _i982.FavoriteLocalDatasourceImpl(gh<_i136.FavoriteDao>()),
     );
-    gh.lazySingleton<_i580.RegisterBloc>(
-      () => _i580.RegisterBloc(gh<_i869.Register>()),
-    );
     gh.lazySingleton<_i187.ProductRepository>(
       () => _i915.ProductRepositoryImpl(
         gh<_i842.NetworkInfo>(),
@@ -269,6 +276,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i82.FavoriteRepository>(
       () => _i415.FavoriteRepositoryImpl(gh<_i982.FavoriteLocalDatasource>()),
     );
+    gh.lazySingleton<_i580.RegisterBloc>(
+      () => _i580.RegisterBloc(
+        gh<_i869.Register>(),
+        gh<_i476.AnalyticsService>(),
+      ),
+    );
     gh.factory<_i420.AuthBloc>(
       () => _i420.AuthBloc(
         gh<_i59.FirebaseAuth>(),
@@ -277,7 +290,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i103.SetOnboardingSeen>(),
       ),
     );
-    gh.singleton<_i222.InitBloc>(
+    gh.factory<_i222.InitBloc>(
       () => _i222.InitBloc(gh<_i927.ProductListCubit>()),
     );
     gh.factory<_i563.NotificationCubit>(
@@ -286,11 +299,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i767.ProductBloc>(
       () => _i767.ProductBloc(gh<_i187.ProductRepository>()),
     );
-    gh.lazySingleton<_i364.SaveToFavorite>(
-      () => _i364.SaveToFavorite(gh<_i82.FavoriteRepository>()),
+    gh.lazySingleton<_i1005.ToggleFavorite>(
+      () => _i1005.ToggleFavorite(gh<_i82.FavoriteRepository>()),
     );
     gh.factory<_i95.FavoriteCubit>(
-      () => _i95.FavoriteCubit(gh<_i82.FavoriteRepository>()),
+      () => _i95.FavoriteCubit(
+        gh<_i82.FavoriteRepository>(),
+        gh<_i1005.ToggleFavorite>(),
+      ),
     );
     return this;
   }
@@ -299,6 +315,8 @@ extension GetItInjectableX on _i174.GetIt {
 class _$SharedPrefsModule extends _i793.SharedPrefsModule {}
 
 class _$FirebaseModule extends _i353.FirebaseModule {}
+
+class _$AnalyticsModule extends _i642.AnalyticsModule {}
 
 class _$SecureStorageModule extends _i305.SecureStorageModule {}
 

@@ -6,5 +6,5 @@ import 'package:marketplace/features/domain/entities/product/product_short_entit
 abstract class FavoriteRepository {
   Stream<List<ProductShortEntity>> watchFavorites();
 
-  Future<Either<Failure, void>> addToFavorite(ProductShortEntity product);
+  Future<Either<Failure, void>> toggleFavorite(ProductShortEntity product);
 }

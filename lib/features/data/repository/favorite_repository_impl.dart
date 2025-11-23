@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:marketplace/core/error/exception.dart';
 
+import 'package:marketplace/core/error/exception.dart';
 import 'package:marketplace/core/error/failure.dart';
 
 import 'package:marketplace/features/data/data_sources/local/favorite/favorite_local_datasource.dart';
@@ -27,11 +27,19 @@ class FavoriteRepositoryImpl extends FavoriteRepository {
   }
 
   @override
-  Future<Either<Failure, void>> addToFavorite(
+  Future<Either<Failure, void>> toggleFavorite(
     ProductShortEntity product,
   ) async {
     try {
-      await datasource.addToFavorites(ProductShortModel.fromEntity(product));
+      final favoriteProduct = await datasource.getFavorite(product.id);
+
+      if (favoriteProduct == null) {
+        await datasource.addToFavorites(ProductShortModel.fromEntity(product));
+      } else {
+        await datasource.removeFromFavorites(
+          ProductShortModel.fromEntity(product),
+        );
+      }
 
       return Right(null);
     } on CacheException catch (err) {

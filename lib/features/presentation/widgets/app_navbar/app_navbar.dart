@@ -78,6 +78,19 @@ class AppNavbar extends StatefulWidget {
 class _AppNavbarState extends State<AppNavbar> {
   int _currentPageIndex = 0;
 
+  void onChangePage(int index) {
+    final currentLink = navLinks[_currentPageIndex];
+    final link = navLinks[index];
+
+    if (currentLink.route != link.route) {
+      setState(() {
+        _currentPageIndex = index;
+      });
+
+      context.push(link.route);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -92,13 +105,7 @@ class _AppNavbarState extends State<AppNavbar> {
         selectedIndex: _currentPageIndex,
         indicatorColor: Colors.transparent,
         onDestinationSelected: (index) {
-          setState(() {
-            _currentPageIndex = index;
-          });
-
-          final link = navLinks[index];
-
-          context.push(link.route);
+          onChangePage(index);
         },
         labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
           if (states.contains(WidgetState.selected)) {

@@ -13,6 +13,7 @@ abstract class ProductShortModel with _$ProductShortModel {
     required String id,
     required String name,
     required double price,
+    @Default(false) bool isFavorite,
     int? discount,
     required String image,
     required String? cursor,

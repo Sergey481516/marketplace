@@ -21,10 +21,16 @@ abstract class ProductEntity with _$ProductEntity {
     // required CategoryEntity category,
     int? discount,
     required String image,
+    @Default(false) bool isFavorite,
   }) = _ProductEntity;
 
-  ProductShortEntity toShort() =>
-      ProductShortEntity(id: id, name: name, price: price, image: image);
+  ProductShortEntity toShort() => ProductShortEntity(
+    id: id,
+    name: name,
+    price: price,
+    image: image,
+    isFavorite: isFavorite,
+  );
 
   double calcPrice() {
     if (discount != null) {

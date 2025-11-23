@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:marketplace/config/injection/injection_container.dart';
 
 import 'package:marketplace/config/router/routes.dart';
+import 'package:marketplace/features/presentation/bloc/favorite/favorite_cubit.dart';
 import 'package:marketplace/features/presentation/bloc/product/product_list_cubit.dart';
 
 import 'package:marketplace/features/presentation/components/product/product_card.dart';
@@ -14,6 +15,7 @@ class ProductListContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productListCubit = getIt<ProductListCubit>();
+    final favoriteCubit = getIt<FavoriteCubit>();
 
     return StreamBuilder(
       stream: productListCubit.watchProducts(),
@@ -30,9 +32,12 @@ class ProductListContainer extends StatelessWidget {
             final product = products[index];
 
             return ProductCard(
-              product: product,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              isFavorite: product.isFavorite,
               onLikeTap: () {
-                // onLikeTap(product);
+                favoriteCubit.toggleFavorite(product.toShort());
               },
               onCardTap: () {
                 context.push(Routes.product.replaceFirst(':id', product.id));

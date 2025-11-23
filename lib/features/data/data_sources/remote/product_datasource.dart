@@ -3,16 +3,13 @@ import 'package:injectable/injectable.dart';
 import 'package:dio/dio.dart';
 
 import 'package:marketplace/core/error/exception.dart';
-import 'package:marketplace/core/resources/response_list/response_list_with_cursor.dart';
 
 import 'package:marketplace/features/data/models/product/product_model.dart';
 import 'package:marketplace/features/data/models/product/product_short_model.dart';
 import 'package:marketplace/features/data/models/product/product_filter_model.dart';
 
 abstract class ProductRemoteDatasource {
-  Future<ResponseListWithCursor<ProductShortModel>> getList(
-    ProductFilterModel? filter,
-  );
+  Future<List<ProductShortModel>> getList(ProductFilterModel? filter);
 
   Future<ProductModel> getById(String id);
 }
@@ -22,9 +19,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDatasource {
   ProductRemoteDataSourceImpl();
 
   @override
-  Future<ResponseListWithCursor<ProductShortModel>> getList(
-    ProductFilterModel? filter,
-  ) async {
+  Future<List<ProductShortModel>> getList(ProductFilterModel? filter) async {
     try {
       final collectionRef = FirebaseFirestore.instance.collection('products');
       final snapshot = await collectionRef.get();
@@ -38,17 +33,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDatasource {
         products.add(ProductShortModel.fromJson(json));
       }
 
-      // return ResponseListWithCursor<ProductShortModel>(
-      //   list: products,
-      //   nextCursor: snapshot.docs.last.toString(),
-      // );
-
-      print(products);
-
-      return ResponseListWithCursor.fromJson(
-        {},
-        (json) => ProductShortModel.fromJson(json as Map<String, dynamic>),
-      );
+      return products.toList();
     } on DioException catch (err) {
       throw ServerException.fromDio(err);
     } catch (err) {
